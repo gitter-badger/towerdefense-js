@@ -1,0 +1,10 @@
+#game {
+	width: 800px;
+	height: 600px;
+	float: center;
+}
+
+#header {
+	height: 100px;
+	float: center;
+}
