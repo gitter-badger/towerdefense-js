@@ -4,11 +4,19 @@ function isCanvasSupported(){
 	return !!(elem.getContext && elem.getContext('2d'));
 }
 
+var WIDTH;
+var HEIGHT;
+var ctx;
+
+
+
 var Game = {
 	// Used for loading the game.
 	loaded: false,
 	canvas: null,
-	context: null,
+	get context() {
+		return ctx;
+	}
 	
 	// Game variables and constants.
     towers: [],
@@ -37,6 +45,33 @@ Game.update = function() {
 Game.render = function() {
 	
 };
+
+function init() {
+	ctx = $('#canvas')[0].getContext("2d");
+  	WIDTH = $("#canvas").width();
+ 	HEIGHT = $("#canvas").height();
+  	
+}
+
+function circle(x,y,r) {
+  	ctx.beginPath();
+  	ctx.arc(x, y, r, 0, Math.PI*2, true);
+  	ctx.closePath();
+  	ctx.fill();
+}
+
+function rect(x,y,w,h) {
+  	ctx.beginPath();
+  	ctx.rect(x,y,w,h);
+  	ctx.closePath();
+  	ctx.fill();
+}
+
+function clear() {
+  	ctx.clearRect(0, 0, WIDTH, HEIGHT);
+}
+
+
 
 window.onload = function() {
 	Game.loaded = true;
