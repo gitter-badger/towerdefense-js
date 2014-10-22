@@ -2,13 +2,18 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="td.css"/>
+		<script src="gamelogic.js"></script>
+		<script src="utility.js"></script>
 	</head>
 	<body>
 		<div id="header">
 			HTML Tower Defense Game
 		</div>
-		<canvas id="game">
-			Your browser may not support the &lt;canvas&gt; element, or JavaScript is disabled.
-		</canvas>
+		<div id="wrapper">
+			<canvas id="game">
+				Your browser may not support the &lt;canvas&gt; element, or JavaScript is disabled.
+			</canvas>
+			<button onclick="startGame()">Play</button>
+		</div>
 	</body>
 </html>
