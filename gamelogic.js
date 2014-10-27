@@ -1,3 +1,5 @@
+console.log("Hey everyone! You can mess with the game by typing things like Game.money = 60000 or Game.enemies = [] (this last one clears the whole screen of enemies)! But if you think that's wrong, don't do it.");
+
 // Found this routine on Stack Overflow.
 function isCanvasSupported(){
 	var elem = document.createElement('canvas');
@@ -34,7 +36,8 @@ var Game = {
     boardHeight: 10,
     
     // Used for clearInterval() for pausing.
-    looper: null
+    looper: null,
+    looper2: null
 };
 
 
@@ -44,12 +47,22 @@ Game.drawPath = function() {
 	var tileWidth = bWidth / this.boardWidth;
 	for (var tX = 0; tX < this.boardWidth; tX++) {
 		for (var tY = 0; tY < this.boardHeight; tY++) {
-			var xpos = 100 + tX * 100;
-			var ypos = 100 + tY * 100;
-			fill(255, 255, 255);
-			rect(xpos, ypos, 100, 100);
+			var xpos = tX * tileWidth;
+			var ypos = 100 + tY * tileWidth;
+			if ((tX + tY) % 2 == 0) {
+				fill(0, 0, 0);
+			} else {
+				fill(255, 255, 255);
+			}
+			rect(xpos, ypos, tileWidth, tileWidth);
 		}
 	}
+};
+
+Game.drawInfo = function() {
+	ctx.font = "20px Arial";
+	fill(0, 0, 255);
+	//ctx.fillText("Money: " + this.money, 30, 30);
 };
 
 
@@ -58,7 +71,11 @@ Game.update = function() {
 };
 
 Game.render = function() {
+	// clear screen
+	clear();
 	
+	Game.drawPath();
+	Game.drawInfo();
 };
 
 
