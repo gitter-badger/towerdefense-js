@@ -39,7 +39,13 @@ var Game = {
     looper: null,
     looper2: null
 };
-
+var TOWER_INFO = [
+	{
+		name: "Regular Tower",
+		description: "Normal tower. Average range, damage, and fire rate.",
+		cost: 200
+	}
+];
 
 
 Game.drawPath = function() {
