@@ -26,7 +26,7 @@ function rect(x,y,w,h) {
   	ctx.closePath();
   	ctx.fill();
 }
-function clear() {
+function clearScreen() {
   	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 }
 

@@ -77,8 +77,7 @@ Game.update = function() {
 };
 
 Game.render = function() {
-	// clear screen
-	clear();
+	clearScreen();
 	
 	Game.drawPath();
 	Game.drawInfo();
