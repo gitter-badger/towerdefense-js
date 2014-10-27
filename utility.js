@@ -9,6 +9,7 @@ function init() {
 }
 function fill(r, g, b) {
 	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+		console.warn("Out of range");
 		return;
 	}
 	ctx.fillStyle = "#" + r.toString(16) + g.toString(16) + b.toString(16);
@@ -31,7 +32,15 @@ function clear() {
 
 // Play and Pause
 function play() {
-	setInterval(Game.render, 33);
+	if (Game.looper != null) {
+		clearInterval(Game.looper);
+		Game.looper = null;
+	}
+	if (Game.looper2 != null) {
+		clearInterval(Game.looper2);
+		Game.looper2 = null;
+	}
+	Game.looper2 = setInterval(Game.render, 33);
 	Game.looper = setInterval(Game.update, 33);
 }
 function pause() {
@@ -39,4 +48,5 @@ function pause() {
 		return false;
 	}
 	clearInterval(Game.looper);
+	Game.looper = null;
 }
