@@ -29,7 +29,20 @@ var Game = {
     
     track: {
     	start: [0, 0],
-    	path: []
+    	path: [
+    		[0, 1], [1, 1], [1, 2], [1, 3], [1, 4],
+    		[1, 5], [1, 6], [1, 7], [1, 8], [2, 8],
+    		[3, 8], [3, 7], [3, 6], [4, 6], [4, 5],
+    		[4, 4], [3, 4], [3, 3], [3, 2], [4, 2],
+    		[5, 2], [6, 2], [7, 2], [7, 3], [7, 4],
+    		[8, 4], [9, 4], [10,4], [11,4], [12,4],
+    		[13,4], [13,3], [13,2], [13,1], [12,1],
+    		[11,1], [10,1], [10,2], [10,3], [10,4],
+    		[10,5], [10,6], [9, 6], [8, 6], [7, 6],
+    		[7, 7], [6, 7], [6, 8], [6, 9], [7, 9],
+    		[8, 9], [9, 9], [10,9], [10,8], [11,8],
+    		[12,8], [13,8], [13,7], [14,7]
+    	]
     },
     
     boardWidth: 15,
@@ -46,7 +59,10 @@ var TOWER_INFO = [
 		cost: 200
 	}
 ];
-
+Game.Enemy = function() {
+	this.x = 0;
+	this.y = 0;
+};
 
 Game.drawPath = function() {
 	var bWidth = 600, bHeight = 400;
@@ -55,20 +71,27 @@ Game.drawPath = function() {
 		for (var tY = 0; tY < this.boardHeight; tY++) {
 			var xpos = tX * tileWidth;
 			var ypos = 100 + tY * tileWidth;
-			if ((tX + tY) % 2 == 0) {
-				fill(0, 0, 0);
-			} else {
-				fill(255, 255, 255);
-			}
+			ctx.fillStyle = "#008800";
 			rect(xpos, ypos, tileWidth, tileWidth);
 		}
+	}
+	var path = [].concat([this.track.start]).concat(this.track.path)
+	for (var i = 0; i < path.length; i++) {
+		var coords = path[i];
+		var tX = coords[0];
+		var tY = coords[1];
+		var xpos = tX * tileWidth;
+		var ypos = 100 + tY * tileWidth;
+		fill(180, 160, 80);
+		rect(xpos, ypos, tileWidth, tileWidth);
+		ctx.stroke()
 	}
 };
 
 Game.drawInfo = function() {
 	ctx.font = "20px Arial";
-	fill(0, 0, 255);
-	//ctx.fillText("Money: " + this.money, 30, 30);
+	ctx.fillStyle = "#0000ff";
+	ctx.fillText("Money: " + this.money, 30, 30);
 };
 
 
