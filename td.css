@@ -23,3 +23,10 @@
 	width: 800px;
 	background-color: rgb(240, 240, 230)
 }
+
+.link-br {
+	color: blue;
+}
+.link-br:visited {
+	color: red;
+}
