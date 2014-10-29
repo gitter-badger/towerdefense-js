@@ -45,6 +45,9 @@ var Game = {
     	]
     },
     
+    // frame counter
+    frame: 0,
+    
     boardWidth: 15,
     boardHeight: 10,
     
@@ -59,9 +62,15 @@ var TOWER_INFO = [
 		cost: 200
 	}
 ];
-Game.Enemy = function() {
+Game.Enemy = function EnemyConstructor() {
 	this.x = 0;
 	this.y = 0;
+};
+Game.Enemy.prototype.draw = function() {
+	ellipse(this.x, this.y, 40, 40);
+};
+Game.Enemy.prototype.update = function() {
+	
 };
 
 Game.drawPath = function() {
@@ -120,5 +129,6 @@ function startGame() {
 	Game.shots = [];
 	Game.money = 500;
 	Game.lives = 50;
+	Game.frame = 0;
 	play();
 }
