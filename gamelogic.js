@@ -65,12 +65,20 @@ var TOWER_INFO = [
 Game.Enemy = function EnemyConstructor() {
 	this.x = 0;
 	this.y = 0;
+	
+	this.prev = track.start;
+	this.next = track.path[0];
+	
+	this.speed = 1.0; // tiles/sec
+	
+	this.t = 0;
 };
 Game.Enemy.prototype.draw = function() {
 	ellipse(this.x, this.y, 40, 40);
 };
 Game.Enemy.prototype.update = function() {
-	
+	this.t += 1/60;
+	this.x = lerp(this.prev[0], this.next[0], this.t);
 };
 
 Game.drawPath = function() {
@@ -101,21 +109,24 @@ Game.drawInfo = function() {
 	ctx.font = "20px Arial";
 	ctx.fillStyle = "#0000ff";
 	ctx.fillText("Money: " + this.money, 30, 30);
+	ctx.fillText("Lives: " + this.lives, 30, 60);
 };
 
 
 Game.update = function() {
 	
-};
+}
 
 Game.render = function() {
 	clearScreen();
 	
 	Game.drawPath();
 	Game.drawInfo();
-};
+}
 
-
+function spawnEnemy() {
+	Game.enemies.push(new Game.Enemy());
+}
 
 window.onload = function() {
 	Game.loaded = true;
