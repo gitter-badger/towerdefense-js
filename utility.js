@@ -30,6 +30,11 @@ function clearScreen() {
   	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 }
 
+// Math functions
+function lerp(x, y, amt) {
+	return x + (y - x) * amt;
+}
+
 // Play and Pause
 function play() {
 	if (Game.looper != null) {
