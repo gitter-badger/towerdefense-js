@@ -59,7 +59,47 @@ var TOWER_INFO = [
 	{
 		name: "Regular Tower",
 		description: "Normal tower. Average range, damage, and fire rate.",
-		cost: 200
+		cost: 200,
+		delay: 45,
+		damage: 10,
+		range: 3,
+		upgrades: [
+			{
+				// What happens to the stats?
+				damage: "+5", range: "+0.25", delay: "-5",
+				cost: 100
+			},
+			{
+				// This upgrade makes the tower level 3.
+				damage: "+7.5", range: "+0.25", delay: "-3",
+				cost: 200
+			},
+			{
+				damage: "+7.5", range: "+0.5", delay: "-2",
+				cost: 250
+			},
+			{
+				damage: "+15",
+				cost: 275
+			},
+			{
+				// Level 6, ultimate upgrade but very pricey
+				damage: "+30", range: "+1", delay: "-15",
+				
+				cost: 750
+			}
+		]
+	},
+	{
+		name: "Laser Tower",
+		description: "The laser tower shoots a beam when an enemy gets in range. Touches all enemies in that line.",
+		cost: 300,
+		delay: 60,
+		damage: 15,
+		range: 2.25,
+		upgrades: [
+			{damage: "+5", delay: "+5", range: "+0.25", cost: 250}
+		]
 	}
 ];
 Game.Enemy = function EnemyConstructor() {
