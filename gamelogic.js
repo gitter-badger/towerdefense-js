@@ -1,4 +1,4 @@
-console.log("Hey everyone! You can mess with the game by typing things like Game.money = 60000 or Game.enemies = [] (this last one clears the whole screen of enemies)! But if you think that's wrong, don't do it.");
+console.log("Hey everyone! You can mess with the game by typing JavaScript commands like Game.money = 60000 or Game.enemies = [] (this last one clears the whole screen of enemies)! But if you think that's wrong, don't do it.");
 
 // Found this routine on Stack Overflow.
 function isCanvasSupported(){
@@ -98,7 +98,8 @@ var TOWER_INFO = [
 		damage: 15,
 		range: 2.25,
 		upgrades: [
-			{damage: "+5", delay: "+5", range: "+0.25", cost: 250}
+			{damage: "+5", delay: "+5", range: "+0.25", cost: 250},
+			{damage: "+10", delay: "-5", range: "+0.25", cost: 275}
 		]
 	}
 ];
@@ -121,17 +122,20 @@ Game.Enemy.prototype.update = function() {
 	this.x = lerp(this.prev[0], this.next[0], this.t);
 };
 
+// draw path routine
 Game.drawPath = function() {
 	var bWidth = 600, bHeight = 400;
 	var tileWidth = bWidth / this.boardWidth;
-	for (var tX = 0; tX < this.boardWidth; tX++) {
+	/*for (var tX = 0; tX < this.boardWidth; tX++) {
 		for (var tY = 0; tY < this.boardHeight; tY++) {
 			var xpos = tX * tileWidth;
 			var ypos = 100 + tY * tileWidth;
 			ctx.fillStyle = "#008800";
 			rect(xpos, ypos, tileWidth, tileWidth);
 		}
-	}
+	}*/
+	ctx.fillStyle = "#008800";
+	rect(0, 100, bWidth, bHeight);
 	var path = [].concat([this.track.start]).concat(this.track.path)
 	for (var i = 0; i < path.length; i++) {
 		var coords = path[i];
@@ -140,16 +144,23 @@ Game.drawPath = function() {
 		var xpos = tX * tileWidth;
 		var ypos = 100 + tY * tileWidth;
 		fill(180, 160, 80);
+		if (i == 0) {
+			ctx.fillStyle = "#5555ff";
+		}
+		if (i == (path.length - 1)) {
+			fill(255, 0, 0);
+		}
 		rect(xpos, ypos, tileWidth, tileWidth);
 		ctx.stroke()
 	}
 };
 
 Game.drawInfo = function() {
-	ctx.font = "20px Arial";
-	ctx.fillStyle = "#0000ff";
+	ctx.font = "20px Futura";
+	ctx.fillStyle = "#00ff00";
 	ctx.fillText("Money: " + this.money, 30, 30);
 	ctx.fillText("Lives: " + this.lives, 30, 60);
+	ctx.fillText("Wave: " + this.wave, 30, 550);
 };
 
 
@@ -157,21 +168,32 @@ Game.update = function() {
 	
 }
 
+
+
+/******************************************\
+ *										  *
+ *  ננננ   ננננ  נ  נ  נננ   ננננ  ננננ   *
+ *  נ   נ  נ     ננ נ  נ  נ  נ     נ   נ  *
+ *  ננננ   נננ   נ ננ  נ  נ  נננ   ננננ   *
+ *  נ  נ   נ     נ  נ  נ  נ  נ     נ  נ   *
+ *  נ   נ  ננננ  נ  נ  נננ   ננננ  נ   נ  *
+ *									      *
+\******************************************/
 Game.render = function() {
-	clearScreen();
+	var e = document.createElement("img");
+	e.src = "background_800x600.png";
+	ctx.drawImage(e, 0, 0);
 	
 	Game.drawPath();
 	Game.drawInfo();
 }
 
-function spawnEnemy() {
-	Game.enemies.push(new Game.Enemy());
-}
 
 window.onload = function() {
 	Game.loaded = true;
 	Game.canvas = document.getElementById("#game");
 	init();
+	setTimeout(startGame, 200);
 }
 
 function startGame() {
