@@ -7,12 +7,22 @@ function init() {
   	WIDTH = Game.canvas.width;
  	HEIGHT = Game.canvas.height;
 }
+function hex(a, digits) {
+	var str = a.toString(16);
+	if (!digits) {return str;}
+	while (str.length < digits) {
+		str = "0" + str;
+	}
+	return str;
+}
 function fill(r, g, b) {
-	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+	if ((r < 0) || (r > 255) || (g < 0) || (g > 255) || (b < 0) || (b > 255)) {
 		console.warn("Out of range");
 		return;
 	}
-	ctx.fillStyle = "#" + r.toString(16) + g.toString(16) + b.toString(16);
+	var stylee = "#" + hex(r, 2) + hex(g, 2) + hex(b, 2);
+	ctx.fillStyle = stylee;
+	return stylee;
 }
 function circle(x,y,r) {
   	ctx.beginPath();
