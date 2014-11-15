@@ -1,4 +1,7 @@
-
+// Make sure the user doesn't lose their game
+window.onbeforeunload = function(event) {
+	//event.returnValue = "You will lose your game progress!";
+}
 
 // Utility Functions
 function init() {
@@ -6,6 +9,17 @@ function init() {
 	ctx = Game.canvas.getContext("2d");
   	WIDTH = Game.canvas.width;
  	HEIGHT = Game.canvas.height;
+ 	
+ 	// Mouse Handling
+	Game.canvas.onmousedown = function() {
+		Game.mousePressed = true;
+	};
+	Game.canvas.onmouseup = function m_up() {
+		Game.mousePressed = false;
+	};
+	Game.canvas.onmouseout = function m_up() {
+		Game.mousePressed = false;
+	};
 }
 function hex(a, digits) {
 	var str = a.toString(16);
