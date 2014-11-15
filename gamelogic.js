@@ -156,11 +156,17 @@ Game.drawPath = function() {
 };
 
 Game.drawInfo = function() {
+	ctx.textAlign = "left";
 	ctx.font = "20px Futura";
 	ctx.fillStyle = "#00ff00";
 	ctx.fillText("Money: " + this.money, 30, 30);
 	ctx.fillText("Lives: " + this.lives, 30, 60);
 	ctx.fillText("Wave: " + this.wave, 30, 550);
+};
+
+Game.drawTowerInfo = function() {
+	ctx.textAlign = "center";
+	ctx.fillText("Buy Towers", 700, 100);
 };
 
 
@@ -196,6 +202,7 @@ Game.render = function() {
 	
 	Game.drawPath();
 	Game.drawInfo();
+	Game.drawTowerInfo();
 }
 
 
