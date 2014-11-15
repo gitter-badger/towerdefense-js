@@ -164,6 +164,16 @@ Game.drawInfo = function() {
 };
 
 
+/******************************************\
+ *                                        *
+ *  נ  נ  נננ   נננ    ננ   נננננ  נננננ  *
+ *  נ  נ  נ  נ  נ  נ  נ  נ    נ    נ      *
+ *  נ  נ  נננ   נ  נ  ננננ    נ    נננ    *
+ *  נ  נ  נ     נ  נ  נ  נ    נ    נ      *
+ *   ננ   נ     נננ   נ  נ    נ    נננננ  *
+ *                                        *
+\******************************************/
+
 Game.update = function() {
 	
 }
@@ -203,5 +213,14 @@ function startGame() {
 	Game.money = 500;
 	Game.lives = 50;
 	Game.frame = 0;
+	Game.wave = 0;
 	play();
+	
+	Game.canvas.onclick = function() {
+		window.MOUSE_LAST_CLICK_EVENT = arguments[0];
+	}
+	Game.canvas.onmousemove = function(event) {
+		Game.mouseX = event.layerX;
+		Game.mouseY = event.layerY;
+	}
 }
