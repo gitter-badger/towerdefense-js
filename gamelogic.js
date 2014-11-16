@@ -103,24 +103,62 @@ var TOWER_INFO = [
 		]
 	}
 ];
-Game.Enemy = function EnemyConstructor() {
+Game.Enemy = function Enemy() {
 	this.x = 0;
 	this.y = 0;
 	
-	this.prev = track.start;
-	this.next = track.path[0];
+	this.prev = Game.track.start;
+	this.next = Game.track.path[0];
+	this.segment = 0;
 	
 	this.speed = 1.0; // tiles/sec
 	
 	this.t = 0;
 };
 Game.Enemy.prototype.draw = function() {
-	ellipse(this.x, this.y, 40, 40);
+	var bWidth = 600, bHeight = 400;
+	var tileSize = bWidth / Game.boardWidth;
+	
+	ctx.save();
+	ctx.fillStyle = "#ff6600";
+	circle((this.x + 1/2) * tileSize, 100 + (this.y + 1/2) * tileSize, 15);
+	ctx.restore();
 };
 Game.Enemy.prototype.update = function() {
-	this.t += 1/60;
+	this.t += 1/5;
 	this.x = lerp(this.prev[0], this.next[0], this.t);
+	this.y = lerp(this.prev[1], this.next[1], this.t);
+	if (this.t >= 1) {
+		if ((this.segment + 1) >= Game.track.path.length) {
+			Game.lives -= 1;
+			this.deleteMe = true;
+			return;
+		}
+		this.prev = this.next;
+		this.segment++;
+		this.next = Game.track.path[this.segment];
+		this.t = 0;
+	}
 };
+
+Game.drawEnemies = function() {
+	for (var i = 0; i < this.enemies.length; i++) {
+		this.enemies[i].draw();
+	}
+};
+Game.updateEnemies = function() {
+	for (var i = this.enemies.length - 1; i >= 0; i--) {
+		this.enemies[i].update();
+		if (this.enemies[i].deleteMe) {
+			this.enemies.splice(i, 1);
+		}
+	}
+};
+
+// test
+function testEnemy() {
+	Game.enemies.push(new Game.Enemy());
+}
 
 // draw path routine
 Game.drawPath = function() {
@@ -181,7 +219,7 @@ Game.drawTowerInfo = function() {
 \******************************************/
 
 Game.update = function() {
-	
+	Game.updateEnemies();
 }
 
 
@@ -201,6 +239,8 @@ Game.render = function() {
 	ctx.drawImage(e, 0, 0);
 	
 	Game.drawPath();
+	Game.drawEnemies();
+	
 	Game.drawInfo();
 	Game.drawTowerInfo();
 }
