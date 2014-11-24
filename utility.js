@@ -29,6 +29,7 @@ function hex(a, digits) {
 	}
 	return str;
 }
+// Drawing Functions
 function fill(r, g, b) {
 	if ((r < 0) || (r > 255) || (g < 0) || (g > 255) || (b < 0) || (b > 255)) {
 		console.warn("Out of range");
@@ -53,11 +54,34 @@ function rect(x,y,w,h) {
 function clearScreen() {
   	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 }
+function wrapText(text, x, y, maxWidth, lineHeight) {
+	var words = text.split(' ');
+	var line = '';
+	
+	for(var n = 0; n < words.length; n++) {
+		var testLine = line + words[n] + ' ';
+		var metrics = ctx.measureText(testLine);
+		var testWidth = metrics.width;
+		if (testWidth > maxWidth && n > 0) {
+			ctx.fillText(line, x, y);
+			line = words[n] + ' ';
+			y += lineHeight;
+		} else {
+			line = testLine;
+		}
+	}
+	ctx.fillText(line, x, y);
+}
+
 
 // Math functions
 function lerp(x, y, amt) {
 	return x + (y - x) * amt;
 }
+Number.prototype.inRange = function(e,t) {
+	return this >= e && this <= t;
+}
+
 
 // Play and Pause
 function play() {
