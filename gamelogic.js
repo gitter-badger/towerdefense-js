@@ -23,6 +23,7 @@ var Game = {
     towers: [],
     enemies: [],
     shots: [],
+    selectedTower: -1,
     
     money: null,
     lives: null,
@@ -53,7 +54,11 @@ var Game = {
     
     // Used for clearInterval() for pausing.
     looper: null,
-    looper2: null
+    looper2: null,
+    
+    // mouse variables
+    mouseX: 0,
+    mouseY: 0,
 };
 var TOWER_INFO = [
 	{
@@ -88,9 +93,21 @@ var TOWER_INFO = [
 				
 				cost: 750
 			}
-		]
+		],
+		
+		draw: function(x, y, angle) {
+			ctx.save();
+			ctx.translate(x, y);
+			ctx.rotate(angle);
+			fill(0, 0, 0);
+			rect(-1, -2, 18, 4);
+			rect(17, -5, 3, 10);
+			ctx.fillStyle = "#ff0000";
+			circle(0, 0, 12);
+			ctx.restore();
+		}
 	},
-	{
+	/*{
 		name: "Laser Tower",
 		description: "The laser tower shoots a beam when an enemy gets in range. Touches all enemies in that line.",
 		cost: 300,
@@ -101,7 +118,7 @@ var TOWER_INFO = [
 			{damage: "+5", delay: "+5", range: "+0.25", cost: 250},
 			{damage: "+10", delay: "-5", range: "+0.25", cost: 275}
 		]
-	}
+	}*/
 ];
 Game.Enemy = function Enemy() {
 	this.x = 0;
@@ -125,7 +142,7 @@ Game.Enemy.prototype.draw = function() {
 	ctx.restore();
 };
 Game.Enemy.prototype.update = function() {
-	this.t += 1/5;
+	this.t += (this.speed / 30);
 	this.x = lerp(this.prev[0], this.next[0], this.t);
 	this.y = lerp(this.prev[1], this.next[1], this.t);
 	if (this.t >= 1) {
@@ -137,7 +154,7 @@ Game.Enemy.prototype.update = function() {
 		this.prev = this.next;
 		this.segment++;
 		this.next = Game.track.path[this.segment];
-		this.t = 0;
+		this.t -= 1;
 	}
 };
 
@@ -162,6 +179,7 @@ function testEnemy() {
 
 // draw path routine
 Game.drawPath = function() {
+	ctx.strokeStyle = "#000000";
 	var bWidth = 600, bHeight = 400;
 	var tileWidth = bWidth / this.boardWidth;
 	/*for (var tX = 0; tX < this.boardWidth; tX++) {
@@ -204,7 +222,54 @@ Game.drawInfo = function() {
 
 Game.drawTowerInfo = function() {
 	ctx.textAlign = "center";
+	ctx.font = "20px Futura";
 	ctx.fillText("Buy Towers", 700, 100);
+	
+	for (var i = 0; i < TOWER_INFO.length; i++) {
+		var twr = TOWER_INFO[i];
+		var x = 650 + 50 * (i % 3);
+		var y = 150 + 50 * Math.floor(i / 3);
+		if (Game.selectedTower == i) {
+			ctx.strokeStyle = "#FFFFFF";
+			ctx.strokeRect(x - 20, y - 20, 40, 40);
+		}
+		twr.draw(x, y, 0);
+		
+		if (Game.mouseX.inRange(x - 15, x + 15) && Game.mouseY.inRange(y - 15, y + 15)) {
+			ctx.font = "16px Futura";
+			fill(255, 255, 255);
+			wrapText(twr.description, 700, 400, 200, 18);
+			
+			if (Game.mousePressed && Game.money >= twr.cost) {
+				Game.selectedTower = i;
+			}
+		}
+	}
+};
+
+// Place tower routine
+Game.placeTowers = function() {
+	// check out of bounds
+	if (!this.mousePressed || !(Game.mouseX.inRange(0, 600) && Game.mouseY.inRange(100, 500))) {
+		return;
+	}
+	
+	if (Game.selectedTower >= 0) {
+		var twr = TOWER_INFO[Game.selectedTower];
+		if (Game.money < twr.cost) { return; }
+		
+		var tX = Game.mouseX / 40, tY = (Game.mouseY - 100) / 40;
+		
+		// check for track overlap
+		var path = [].concat([this.track.start]).concat(this.track.path);
+		for (var i = 0; i < path.length; i++) {
+			if (tX) {
+				
+			}
+		}
+		
+		Game.towers.push(new Game.Tower(tX, tY, twr));
+	}
 };
 
 
@@ -263,9 +328,6 @@ function startGame() {
 	Game.wave = 0;
 	play();
 	
-	Game.canvas.onclick = function() {
-		window.MOUSE_LAST_CLICK_EVENT = arguments[0];
-	}
 	Game.canvas.onmousemove = function(event) {
 		Game.mouseX = event.layerX;
 		Game.mouseY = event.layerY;
