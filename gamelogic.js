@@ -9,7 +9,7 @@ function isCanvasSupported(){
 var WIDTH;
 var HEIGHT;
 var ctx;
-
+var TILE_SIZE = 40;
 
 var Game = {
 	// Used for loading the game.
@@ -120,6 +120,9 @@ var TOWER_INFO = [
 		]
 	}*/
 ];
+
+
+
 Game.Enemy = function Enemy() {
 	this.x = 0;
 	this.y = 0;
@@ -176,6 +179,41 @@ Game.updateEnemies = function() {
 function testEnemy() {
 	Game.enemies.push(new Game.Enemy());
 }
+
+
+
+Game.Tower = function Tower(x, y, type) {
+	this.x = x;
+	this.y = y;
+	this.type = type;
+	
+	this.range = type.range;
+	this.delay = type.delay;
+	this.damage = type.damage;
+	this.lastFired = -Infinity;
+	
+	this.angle = 0;
+}
+Game.Tower.prototype.draw = function( ) {
+	var otherParam = undefined;
+	this.type.draw(this.x * TILE_SIZE, 100 + this.y * TILE_SIZE, this.angle, otherParam);
+};
+
+Game.drawTowers = function() {
+	for (var i = 0; i < this.towers.length; i++) {
+		this.towers[i].draw();
+	}
+}
+
+
+
+
+
+
+
+
+
+
 
 // draw path routine
 Game.drawPath = function() {
@@ -261,17 +299,20 @@ Game.placeTowers = function() {
 		var tX = Game.mouseX / 40, tY = (Game.mouseY - 100) / 40;
 		
 		// check for track overlap
-		var path = [].concat([this.track.start]).concat(this.track.path);
+		/*var path = [].concat([this.track.start]).concat(this.track.path);
 		for (var i = 0; i < path.length; i++) {
 			if (tX) {
 				
 			}
-		}
+		}*/
 		
 		Game.towers.push(new Game.Tower(tX, tY, twr));
+		Game.selectedTower = -1;
 	}
 };
-
+function mouseClicked() {
+	Game.placeTowers();
+};
 
 /******************************************\
  *                                        *
@@ -284,6 +325,7 @@ Game.placeTowers = function() {
 \******************************************/
 
 Game.update = function() {
+	Game.placeTowers();
 	Game.updateEnemies();
 }
 
@@ -305,6 +347,7 @@ Game.render = function() {
 	
 	Game.drawPath();
 	Game.drawEnemies();
+	Game.drawTowers();
 	
 	Game.drawInfo();
 	Game.drawTowerInfo();
@@ -331,5 +374,8 @@ function startGame() {
 	Game.canvas.onmousemove = function(event) {
 		Game.mouseX = event.layerX;
 		Game.mouseY = event.layerY;
+	}
+	Game.canvas.onclick = function() {
+		mouseClicked();
 	}
 }

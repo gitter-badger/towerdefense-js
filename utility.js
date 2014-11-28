@@ -102,4 +102,6 @@ function pause() {
 	}
 	clearInterval(Game.looper);
 	Game.looper = null;
+	clearInterval(Game.looper2);
+	Game.looper2 = null;
 }
