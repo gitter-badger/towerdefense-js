@@ -306,6 +306,7 @@ Game.placeTowers = function() {
 			}
 		}*/
 		
+		Game.money -= twr.cost;
 		Game.towers.push(new Game.Tower(tX, tY, twr));
 		Game.selectedTower = -1;
 	}
@@ -365,7 +366,7 @@ function startGame() {
 	Game.towers = [];
 	Game.enemies = [];
 	Game.shots = [];
-	Game.money = 500;
+	Game.money = 3000;
 	Game.lives = 50;
 	Game.frame = 0;
 	Game.wave = 0;
