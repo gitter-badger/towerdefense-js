@@ -117,7 +117,13 @@ var TOWER_INFO = [
 		upgrades: [
 			{damage: "+5", delay: "+5", range: "+0.25", cost: 250},
 			{damage: "+10", delay: "-5", range: "+0.25", cost: 275}
-		]
+		],
+		
+		draw: function(x, y, angle) {
+			ctx.save();
+			
+			ctx.restore();
+		}
 	}*/
 ];
 
@@ -214,7 +220,6 @@ Game.drawTowers = function() {
 
 
 
-
 // draw path routine
 Game.drawPath = function() {
 	ctx.strokeStyle = "#000000";
@@ -296,15 +301,18 @@ Game.placeTowers = function() {
 		var twr = TOWER_INFO[Game.selectedTower];
 		if (Game.money < twr.cost) { return; }
 		
-		var tX = Game.mouseX / 40, tY = (Game.mouseY - 100) / 40;
+		var mx = Game.mouseX, my = Game.mouseY;
+		var tX = mx / 40, tY = (my - 100) / 40;
 		
 		// check for track overlap
-		/*var path = [].concat([this.track.start]).concat(this.track.path);
+		var path = [].concat([this.track.start]).concat(this.track.path);
 		for (var i = 0; i < path.length; i++) {
-			if (tX) {
-				
+			var ttX = path[i][0], ttY = path[i][1]; // track
+			var xx = ttX * TILE_SIZE, yy = 100 + ttY * TILE_SIZE; // x/y positions
+			if (mx+12 > xx && mx-12 < xx + TILE_SIZE && myx+12 > yy && my-12 < yy + TILE_SIZE) {
+				return;
 			}
-		}*/
+		}
 		
 		Game.money -= twr.cost;
 		Game.towers.push(new Game.Tower(tX, tY, twr));
