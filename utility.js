@@ -54,25 +54,29 @@ function rect(x,y,w,h) {
 function clearScreen() {
   	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 }
-function wrapText(text, x, y, maxWidth, lineHeight) {
-	var words = text.split(' ');
-	var line = '';
-	
-	for(var n = 0; n < words.length; n++) {
-		var testLine = line + words[n] + ' ';
-		var metrics = ctx.measureText(testLine);
-		var testWidth = metrics.width;
-		if (testWidth > maxWidth && n > 0) {
-			ctx.fillText(line, x, y);
-			line = words[n] + ' ';
-			y += lineHeight;
-		} else {
-			line = testLine;
-		}
-	}
-	ctx.fillText(line, x, y);
+function wrapText(text, x, y, line_width, line_height) {
+    var line = '';
+    var paragraphs = text.split('\n');
+    for (var i = 0; i < paragraphs.length; i++) {
+        var words = paragraphs[i].split(' ');
+        for (var n = 0; n < words.length; n++) {
+            var testLine = line + words[n] + ' ';
+            var metrics = ctx.measureText(testLine);
+            var testWidth = metrics.width;
+            if (testWidth > line_width && n > 0) {
+                ctx.fillText(line, x, y);
+                line = words[n] + ' ';
+                y += line_height;
+            } else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line, x, y);
+        y += line_height;
+        line = '';
+    }
 }
-CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
 	if (w < 2 * r) r = w / 2;
 	if (h < 2 * r) r = h / 2;
 	this.beginPath();

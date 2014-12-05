@@ -42,7 +42,7 @@ var Game = {
     		[10,5], [10,6], [9, 6], [8, 6], [7, 6],
     		[7, 7], [6, 7], [6, 8], [6, 9], [7, 9],
     		[8, 9], [9, 9], [10,9], [10,8], [11,8],
-    		[12,8], [13,8], [13,7], [14,7]
+    		[12,8], [13,8], [13,7], [13,6], [14,6]
     	]
     },
     
@@ -59,6 +59,10 @@ var Game = {
     // mouse variables
     mouseX: 0,
     mouseY: 0,
+    mousePressed: false,
+    
+    // popups
+    popup: false
 };
 var TOWER_INFO = [
 	{
@@ -309,7 +313,14 @@ Game.placeTowers = function() {
 		for (var i = 0; i < path.length; i++) {
 			var ttX = path[i][0], ttY = path[i][1]; // track
 			var xx = ttX * TILE_SIZE, yy = 100 + ttY * TILE_SIZE; // x/y positions
-			if (mx+12 > xx && mx-12 < xx + TILE_SIZE && myx+12 > yy && my-12 < yy + TILE_SIZE) {
+			if (mx+12 > xx && mx-12 < xx + TILE_SIZE && my+12 > yy && my-12 < yy + TILE_SIZE) {
+				Game.selectedTower = -1;
+				Game.popup = {
+					text: "No placing towers on the track.",
+					width: 120,
+					height: 70,
+					tSize: 20
+				};
 				return;
 			}
 		}
@@ -334,6 +345,9 @@ function mouseClicked() {
 \******************************************/
 
 Game.update = function() {
+	if (this.popup) {
+		return;
+	}
 	Game.placeTowers();
 	Game.updateEnemies();
 }
@@ -360,6 +374,24 @@ Game.render = function() {
 	
 	Game.drawInfo();
 	Game.drawTowerInfo();
+	
+	window.status = Game.popup;
+	if (Game.popup) {
+		fill(255, 255, 255);
+		//stroke(0, 0, 0);
+		ctx.roundRect(
+			400 - Game.popup.width / 2,
+			300 - Game.popup.height / 2,
+			Game.popup.width,
+			Game.popup.height,
+			5
+		);
+		ctx.fill();
+		fill(0, 0, 0);
+		ctx.textAlign = "center";
+		ctx.font = Game.popup.tSize + "px Futura";
+		wrapText(" \n " + Game.popup.text, 400, 300 - Game.popup.height / 2, Game.popup.width, Game.popup.tSize);
+	}
 }
 
 
@@ -380,11 +412,19 @@ function startGame() {
 	Game.wave = 0;
 	play();
 	
+	Game.popup = {
+		text: "\nWelcome! Click this box to close.\n\nClick on towers to select them. You can upgrade or sell from there.",
+		width: 300,
+		height: 170,
+		tSize: 20
+	};
+	
 	Game.canvas.onmousemove = function(event) {
 		Game.mouseX = event.layerX;
 		Game.mouseY = event.layerY;
 	}
 	Game.canvas.onclick = function() {
 		mouseClicked();
+		Game.popup = false;
 	}
 }
