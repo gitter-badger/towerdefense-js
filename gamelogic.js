@@ -283,7 +283,7 @@ Game.drawTowerInfo = function() {
 		var twr = TOWER_INFO[i];
 		var x = 650 + 50 * (i % 3);
 		var y = 150 + 50 * Math.floor(i / 3);
-		if (Game.selectedTower == i) {
+		if (Game.selectedType == i) {
 			ctx.strokeStyle = "#FFFFFF";
 			ctx.strokeRect(x - 20, y - 20, 40, 40);
 		}
@@ -295,7 +295,7 @@ Game.drawTowerInfo = function() {
 			wrapText(twr.description, 700, 400, 200, 18);
 			
 			if (Game.mousePressed && Game.money >= twr.cost) {
-				Game.selectedTower = i;
+				Game.selectedType = i;
 			}
 		}
 	}
@@ -308,8 +308,8 @@ Game.placeTowers = function() {
 		return;
 	}
 	
-	if (Game.selectedTower >= 0) {
-		var twr = TOWER_INFO[Game.selectedTower];
+	if (Game.selectedType >= 0) {
+		var twr = TOWER_INFO[Game.selectedType];
 		if (Game.money < twr.cost) { return; }
 		
 		var mx = Game.mouseX, my = Game.mouseY;
@@ -321,7 +321,7 @@ Game.placeTowers = function() {
 			var ttX = path[i][0], ttY = path[i][1]; // track
 			var xx = ttX * TILE_SIZE, yy = 100 + ttY * TILE_SIZE; // x/y positions
 			if (mx+12 > xx && mx-12 < xx + TILE_SIZE && my+12 > yy && my-12 < yy + TILE_SIZE) {
-				Game.selectedTower = -1;
+				Game.selectedType = -1;
 				Game.popup = {
 					text: "No placing towers on the track.",
 					width: 120,
@@ -334,9 +334,20 @@ Game.placeTowers = function() {
 		
 		Game.money -= twr.cost;
 		Game.towers.push(new Game.Tower(tX, tY, twr));
-		Game.selectedTower = -1;
+		Game.selectedType = -1;
 	}
 };
+// Select towers
+Game.selectTowers = function() {
+	// check out of bounds
+	if (!this.mousePressed || !(Game.mouseX.inRange(0, 600) && Game.mouseY.inRange(100, 500))) {
+		return;
+	}
+	
+	
+};
+
+
 function mouseClicked() {
 	Game.placeTowers();
 };
