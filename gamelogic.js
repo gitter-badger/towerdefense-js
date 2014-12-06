@@ -141,8 +141,8 @@ var WAVES = [
 
 
 Game.Enemy = function Enemy() {
-	this.x = 0;
-	this.y = 0;
+	this.x = Game.track.start[0];
+	this.y = Game.track.start[1];
 	
 	this.prev = Game.track.start;
 	this.next = Game.track.path[0];
