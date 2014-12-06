@@ -133,6 +133,13 @@ var TOWER_INFO = [
 
 
 
+var WAVES = [
+//              5    0    5    0    5    0    5    0    5
+	{wave: "0000000000", message: "That was too easy, try the next round.", delay: 500},
+	{wave: "00000000000000000000", message: "Great job. Now here comes the fast enemy.", delay: 400}
+];
+
+
 Game.Enemy = function Enemy() {
 	this.x = 0;
 	this.y = 0;
