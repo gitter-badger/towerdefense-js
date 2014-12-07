@@ -51,6 +51,9 @@ function rect(x,y,w,h) {
   	ctx.closePath();
   	ctx.fill();
 }
+function noFill() {
+	ctx.fillStyle = "rgba(255, 255, 255, 0)";
+}
 function clearScreen() {
   	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 }
@@ -96,6 +99,9 @@ function lerp(x, y, amt) {
 }
 Number.prototype.inRange = function(e,t) {
 	return this >= e && this <= t;
+}
+function dist(x1, y1, x2, y2) {
+	return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) );
 }
 
 

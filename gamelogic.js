@@ -23,7 +23,9 @@ var Game = {
     towers: [],
     enemies: [],
     shots: [],
+    sell: 0.8, // sell back ratio
     selectedTower: -1,
+    selectedType: -1,
     
     money: null,
     lives: null,
@@ -76,7 +78,7 @@ var TOWER_INFO = [
 			{
 				// What happens to the stats?
 				damage: "+5", range: "+0.25", delay: "-5",
-				cost: 100
+				cost: 140
 			},
 			{
 				// This upgrade makes the tower level 3.
@@ -111,7 +113,7 @@ var TOWER_INFO = [
 			ctx.restore();
 		}
 	},
-	/*{
+	{
 		name: "Laser Tower",
 		description: "The laser tower shoots a beam when an enemy gets in range. Touches all enemies in that line.",
 		cost: 300,
@@ -120,15 +122,25 @@ var TOWER_INFO = [
 		range: 2.25,
 		upgrades: [
 			{damage: "+5", delay: "+5", range: "+0.25", cost: 250},
-			{damage: "+10", delay: "-5", range: "+0.25", cost: 275}
+			{damage: "+10", delay: "-5", range: "+0.25", cost: 275},
+			{delay: "-10", range: "+0.5", cost: 300},
+			{damage: "+15", delay: "-5", cost: 350},
+			// ultimate upgrade (L6)
+			{damage: "+25", delay: "-15", range: "+1", cost: 720}
 		],
 		
 		draw: function(x, y, angle) {
 			ctx.save();
+			ctx.translate(x, y);
+			ctx.rotate(angle);
+			fill(50, 200, 70);
+			circle(0, 0, 8);
+			fill(0, 0, 255);
+			rect(4, -2, 8, 4);
 			
 			ctx.restore();
 		}
-	}*/
+	}
 ];
 
 
@@ -199,6 +211,10 @@ function testEnemy() {
 
 
 
+
+
+
+
 Game.Tower = function Tower(x, y, type) {
 	this.x = x;
 	this.y = y;
@@ -210,6 +226,9 @@ Game.Tower = function Tower(x, y, type) {
 	this.lastFired = -Infinity;
 	
 	this.angle = 0;
+	
+	this.level = 1; // tower level
+	this.totalCost = type.cost;
 }
 Game.Tower.prototype.draw = function( ) {
 	var otherParam = undefined;
@@ -340,16 +359,55 @@ Game.placeTowers = function() {
 // Select towers
 Game.selectTowers = function() {
 	// check out of bounds
-	if (!this.mousePressed || !(Game.mouseX.inRange(0, 600) && Game.mouseY.inRange(100, 500))) {
-		return;
+	if (!(Game.mouseX.inRange(0, 600) && Game.mouseY.inRange(100, 500))) {
+		return console.log("Out of bounds to select a tower. Mouse pressed = " + Game.mousePressed + ". Position = (" + Game.mouseX + ", " + Game.mouseY + ")");
 	}
 	
-	
+	Game.selectedTower = -1;
+	var mx = Game.mouseX / TILE_SIZE;
+	var my = (Game.mouseY - 100) / TILE_SIZE;
+	for (var i = 0; i < Game.towers.length; i++) {
+		var twr = Game.towers[i];
+		if (dist(twr.x, twr.y, mx, my) < 15 / TILE_SIZE) {
+			Game.selectedTower = i;
+			console.log("Selecting tower " + i);
+		}
+	}
+};
+
+// Draw Upgrades
+Game.drawUpgrades = function() {
+	if (this.selectedTower !== -1) {
+		var twr = Game.towers[Game.selectedTower];
+		noFill();
+		circle(twr.x * TILE_SIZE, twr.y * TILE_SIZE + 100, twr.range * TILE_SIZE);
+		ctx.stroke();
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		if (true || twr.level < 6) {
+			fill(255, 255, 255);
+			ctx.roundRect(620, 300, 160, 50, 5).fill();
+			fill(0, 0, 192);
+			ctx.fillText("Upgrade Tower", 700, 325);
+		}
+		fill(255, 255, 255);
+		ctx.roundRect(620, 360, 160, 50, 5).fill();
+		fill(0, 0, 192);
+		ctx.fillText("Sell Tower", 700, 385);
+		
+		if (Game.mousePressed && Game.mouseX.inRange(620, 780) && Game.mouseY.inRange(360, 410)) {
+			Game.money += Game.sell * twr.totalCost;
+			Game.towers.splice(Game.selectedTower, 1);
+			Game.selectedTower = -1;
+		}
+		ctx.textBaseline = "alphabetic";
+	}
 };
 
 
 function mouseClicked() {
 	Game.placeTowers();
+	Game.selectTowers();
 };
 
 /******************************************\
@@ -392,6 +450,7 @@ Game.render = function() {
 	
 	Game.drawInfo();
 	Game.drawTowerInfo();
+	Game.drawUpgrades();
 	
 	window.status = Game.popup;
 	if (Game.popup) {
