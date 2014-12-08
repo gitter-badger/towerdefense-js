@@ -77,26 +77,25 @@ var TOWER_INFO = [
 		upgrades: [
 			{
 				// What happens to the stats?
-				damage: "+5", range: "+0.25", delay: "-5",
+				data: {damage: "+5", range: "+0.25", delay: "-5"},
 				cost: 140
 			},
 			{
 				// This upgrade makes the tower level 3.
-				damage: "+7.5", range: "+0.25", delay: "-3",
+				data: {damage: "+7.5", range: "+0.25", delay: "-3"},
 				cost: 200
 			},
 			{
-				damage: "+7.5", range: "+0.5", delay: "-2",
+				data: {damage: "+7.5", range: "+0.5", delay: "-2"},
 				cost: 250
 			},
 			{
-				damage: "+15",
+				data: {damage: "+15"},
 				cost: 275
 			},
 			{
 				// Level 6, ultimate upgrade but very pricey
-				damage: "+30", range: "+1", delay: "-15",
-				
+				data: {damage: "+30", range: "+1", delay: "-15"},
 				cost: 750
 			}
 		],
@@ -121,12 +120,12 @@ var TOWER_INFO = [
 		damage: 15,
 		range: 2.25,
 		upgrades: [
-			{damage: "+5", delay: "+5", range: "+0.25", cost: 250},
-			{damage: "+10", delay: "-5", range: "+0.25", cost: 275},
-			{delay: "-10", range: "+0.5", cost: 300},
-			{damage: "+15", delay: "-5", cost: 350},
+			{ data: {damage: "+5", delay: "+5", range: "+0.25"}, cost: 250},
+			{ data: {damage: "+10", delay: "-5", range: "+0.25"}, cost: 275},
+			{ data: {delay: "-10", range: "+0.5"}, cost: 300},
+			{ data: {damage: "+15", delay: "-5"}, cost: 350},
 			// ultimate upgrade (L6)
-			{damage: "+25", delay: "-15", range: "+1", cost: 720}
+			{ data: {damage: "+25", delay: "-15", range: "+1"}, cost: 720}
 		],
 		
 		draw: function(x, y, angle) {
@@ -229,17 +228,18 @@ Game.Tower = function Tower(x, y, type) {
 	
 	this.level = 1; // tower level
 	this.totalCost = type.cost;
+	
+	this.upgrades = this.type.upgrades;
 }
 Game.Tower.prototype.draw = function( ) {
 	var otherParam = undefined;
 	this.type.draw(this.x * TILE_SIZE, 100 + this.y * TILE_SIZE, this.angle, otherParam);
 };
 Game.Tower.prototype.upgrade = function() {
-	var up = this.type.upgrades[this.level - 1];
+	var up = this.type.upgrades[this.level - 1].data;
 	if (!up) return;
 	for (var type in up) {
-		if (type === 'cost') continue;
-		if (this[type]) {
+		if (this[type] !== undefined) {
 			var what = up[type];
 			var foo = what.substr(1, what.length - 1);
 			switch (what[0]) {
@@ -262,6 +262,7 @@ Game.Tower.prototype.upgrade = function() {
 			}
 		}
 	}
+	this.level++;
 };
 
 Game.drawTowers = function() {
@@ -408,12 +409,21 @@ Game.selectTowers = function() {
 Game.drawUpgrades = function() {
 	if (this.selectedTower !== -1) {
 		var twr = Game.towers[Game.selectedTower];
+		
+		// Draw Range
 		noFill();
 		circle(twr.x * TILE_SIZE, twr.y * TILE_SIZE + 100, twr.range * TILE_SIZE);
 		ctx.stroke();
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
-		if (true || twr.level < 6) {
+		
+		// draw tower name
+		ctx.font = "16px Futura";
+		fill(0, 255, 0);
+		ctx.fillText(twr.type.name + " L" + twr.level, 700, 275);
+		
+		if (twr.level < 6) {
+			// Draw Upgrade Button
 			fill(255, 255, 255);
 			ctx.roundRect(620, 300, 160, 50, 5).fill();
 			fill(0, 0, 192);
@@ -424,6 +434,17 @@ Game.drawUpgrades = function() {
 		fill(0, 0, 192);
 		ctx.fillText("Sell Tower", 700, 385);
 		
+		// Upgrade Tower
+		if (Game.mouseTicks == 1 && Game.mouseX.inRange(620, 780) && Game.mouseY.inRange(300, 350)) {
+			if (twr.level < 6) {
+				var up = twr.upgrades[twr.level - 1];
+				if (Game.money >= up.cost) {
+					twr.upgrade();
+				}
+			}
+		}
+		
+		// Sell Tower
 		if (Game.mousePressed && Game.mouseX.inRange(620, 780) && Game.mouseY.inRange(360, 410)) {
 			Game.money += Game.sell * twr.totalCost;
 			Game.towers.splice(Game.selectedTower, 1);
@@ -450,6 +471,13 @@ function mouseClicked() {
 \******************************************/
 
 Game.update = function() {
+	if (Game.mousePressed) {
+		Game.mouseTicks++;
+	} else {
+		Game.mouseTicks = 0;
+	}
+	
+	// don't play for pop ups
 	if (this.popup) {
 		return;
 	}
