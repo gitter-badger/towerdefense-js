@@ -234,6 +234,35 @@ Game.Tower.prototype.draw = function( ) {
 	var otherParam = undefined;
 	this.type.draw(this.x * TILE_SIZE, 100 + this.y * TILE_SIZE, this.angle, otherParam);
 };
+Game.Tower.prototype.upgrade = function() {
+	var up = this.type.upgrades[this.level - 1];
+	if (!up) return;
+	for (var type in up) {
+		if (type === 'cost') continue;
+		if (this[type]) {
+			var what = up[type];
+			var foo = what.substr(1, what.length - 1);
+			switch (what[0]) {
+				case "=":
+					if (isNaN(foo * 1)) {
+						this[type] = foo;
+					} else {
+						this[type] = foo * 1;
+					}
+				break;
+				case "+": case "-":
+					this[type] += (what[0] === "+" ? 1 : -1) * foo;
+				break;
+				case "*":
+					this[type] *= (foo * 1);
+				break;
+				case "/":
+					if (foo != 0) this[type] /= (foo * 1);
+				break;
+			}
+		}
+	}
+};
 
 Game.drawTowers = function() {
 	for (var i = 0; i < this.towers.length; i++) {
@@ -311,7 +340,7 @@ Game.drawTowerInfo = function() {
 		if (Game.mouseX.inRange(x - 15, x + 15) && Game.mouseY.inRange(y - 15, y + 15)) {
 			ctx.font = "16px Futura";
 			fill(255, 255, 255);
-			wrapText(twr.description, 700, 400, 200, 18);
+			wrapText(twr.description, 700, 480, 200, 18);
 			
 			if (Game.mousePressed && Game.money >= twr.cost) {
 				Game.selectedType = i;
