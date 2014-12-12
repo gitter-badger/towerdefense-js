@@ -1,6 +1,8 @@
 towerdefense-js
 ===============
 
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/mathdude314/towerdefense-js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A tower defense game implemented in the HTML canvas element.
 
 
